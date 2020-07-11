@@ -3,6 +3,15 @@ name = "tide-tera"
 version = "0.1.0"
 authors = ["Jacob Rothstein <hi@jbr.me>"]
 edition = "2018"
+description = "Use tera templates on tide"
+keywords = ["tide", "tera", "web", "template"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/jbr/tide-tera"
+
+[package.metadata.docs.rs]
+features = ["docs"]
+
 
 [dependencies]
 tide = "0.11.0"

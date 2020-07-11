@@ -1,9 +1,44 @@
+//! # Tide-Tera integration This crate exposes [an extension
+//! trait](TideTeraExt) that adds two methods to [`tera::Tera`]:
+//! [`render_response`](TideTeraExt::render_response) and
+//! [`render_body`](TideTeraExt::render_body). It also adds a
+//! convenience [`context`] macro for creating ad-hoc tera
+//! [`Context`](tera::Context)s.
+
 use std::path::PathBuf;
 use tera::{Context, Tera};
 use tide::{http::Mime, Body, Response, Result};
 
+/// This extension trait adds two methods to [`tera::Tera`]:
+/// [`render_response`](TideTeraExt::render_response) and
+/// [`render_body`](TideTeraExt::render_body)
 pub trait TideTeraExt {
+    /// `render_body` returns a fully-rendered [`tide::Body`] with mime
+    /// type set based on the template name file extension using the
+    /// logic at [`tide::http::Mime::from_extension`]. This will
+    /// return an `Err` variant if the render was unsuccessful.
+    ///
+    /// ```rust
+    /// use tide_tera::prelude::*;
+    /// let tera = tera::Tera::new("tests/templates/**/*").unwrap();
+    /// let response = tera
+    ///     .render_response("good_template.html", &context! { "name" => "tide" })
+    ///     .unwrap();
+    /// assert_eq!(response.content_type(), Some(tide::http::mime::HTML));
+    ///```
     fn render_response(&self, template_name: &str, context: &Context) -> Result;
+    /// `render_response` returns a tide Response with a body rendered
+    /// with [`render_body`](TideTeraExt::render_body). This will
+    /// return an `Err` variant if the render was unsuccessful.
+    ///
+    /// ```rust
+    /// use tide_tera::prelude::*;
+    /// let tera = tera::Tera::new("tests/templates/**/*").unwrap();
+    /// let body = tera
+    ///     .render_body("good_template.html", &context! { "name" => "tide" })
+    ///     .unwrap();
+    /// assert_eq!(body.mime(), &tide::http::mime::HTML);
+    ///```
     fn render_body(&self, template_name: &str, context: &Context) -> Result<Body>;
 }
 
@@ -29,6 +64,13 @@ impl TideTeraExt for Tera {
     }
 }
 
+/// this macro simplifies creation of ad-hoc [`tera::Context`]s.
+/// ```rust
+/// # use tide_tera::context;
+/// let mut context = tera::Context::new();
+/// context.insert("template-engine", "tera");
+/// assert_eq!(context, context! { "template-engine" => "tera" });
+/// ```
 #[macro_export]
 macro_rules! context {
     ($($key:expr => $value:expr,)+) => { context!($($key => $value),+) };
@@ -44,6 +86,7 @@ macro_rules! context {
 }
 
 pub mod prelude {
+    //! exposes [`context`] and [`TideTeraExt].
     pub use super::{context, TideTeraExt};
 }
 
