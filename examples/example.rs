@@ -12,7 +12,7 @@ async fn main() -> tide::Result<()> {
 
     app.at("/:name").get(|req: tide::Request<Tera>| async move {
         let tera = req.state();
-        let name: String = req.param("name")?;
+        let name = req.param("name")?;
         tera.render_response("hello.html", &context! { "name" => name })
     });
 
