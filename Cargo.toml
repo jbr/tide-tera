@@ -10,8 +10,9 @@ readme = "README.md"
 repository = "https://github.com/jbr/tide-tera"
 
 [dependencies]
-tide = "0.14.0"
+tide = { version = "0.14.0", default-features = false }
 tera = "1.5.0"
 
 [dev-dependencies]
+tide = { version = "0.14.0", default-features = true }
 async-std = { version = "1.6.5", features = ["attributes"] }
