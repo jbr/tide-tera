@@ -11,8 +11,8 @@ repository = "https://github.com/jbr/tide-tera"
 
 [dependencies]
 tide = { version = "0.16.0", default-features = false }
-tera = "1.5.0"
+tera = "1.6.1"
 
 [dev-dependencies]
 tide = { version = "0.16.0", default-features = true }
-async-std = { version = "1.6.5", features = ["attributes"] }
+async-std = { version = "1.9.0", features = ["attributes"] }
