@@ -6,6 +6,7 @@
 //! [`Context`](tera::Context)s.
 
 use std::path::PathBuf;
+use async_std::{sync::{Arc, RwLock}, task};
 use tera::{Context, Tera};
 use tide::{http::Mime, Body, Response, Result};
 
@@ -61,6 +62,18 @@ impl TideTeraExt for Tera {
         let mut response = Response::new(200);
         response.set_body(self.render_body(template_name, context)?);
         Ok(response)
+    }
+}
+
+impl TideTeraExt for Arc<RwLock<Tera>> {
+    fn render_body(&self, template_name: &str, context: &Context) -> Result<Body> {
+        let tera = task::block_on(self.read());
+        tera.render_body(template_name, context)
+    }
+
+    fn render_response(&self, template_name: &str, context: &tera::Context) -> Result {
+        let tera = task::block_on(self.read());
+        tera.render_response(template_name, context)
     }
 }
 
